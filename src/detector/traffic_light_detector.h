@@ -18,6 +18,7 @@ namespace perception
 
         private:
             void create_binding_memory();
+            void preprocess(CameraFrame *frame);
             void inference();
             void postprocess(CameraFrame *frame);
 
@@ -27,6 +28,10 @@ namespace perception
             // model params
             float m_class_bbox_thresh = 0.7;
             float m_nms_thresh = 0.45;
+
+            // image mem
+            void *m_nv12_device;
+            void *m_bgr_crop_device;
 
             // tensorrt
             cudaStream_t m_cuda_stream = nullptr;

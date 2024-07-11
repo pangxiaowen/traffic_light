@@ -1,9 +1,10 @@
 #include "traffic_light_detector.h"
-#include "preprocess.h"
+#include "trt_preprocess.hpp"
 #include <algorithm>
 #include <numeric>
 #include <map>
 #include <opencv2/opencv.hpp>
+#include <nppi.h>
 
 constexpr int MAX_IMAGE_SIZE = 3840 * 2160 * 3;
 
@@ -41,23 +42,17 @@ namespace perception
             // init cuda stream
             checkRuntime(cudaStreamCreate(&m_cuda_stream));
 
-            // 分别预处理内存
-            cuda_preprocess_init(MAX_IMAGE_SIZE);
+            // 分配用于图像处理的内存
+            cudaMallocManaged(&m_nv12_device, MAX_IMAGE_SIZE * sizeof(uint8_t));
+            cudaMallocManaged(&m_bgr_crop_device, MAX_IMAGE_SIZE * sizeof(uint8_t));
+
             return true;
         }
 
         void TrafficLightDetection::process(CameraFrame *frame)
         {
-            // ROI
-            cv::Mat src_image(frame->height, frame->width, CV_8UC3, frame->data_provider);
-            cv::Rect roi_rect = {frame->detection_roi.x, frame->detection_roi.y, frame->detection_roi.width, frame->detection_roi.height};
-            cv::Mat roi_image = src_image(roi_rect).clone();
-
             // 预处理
-            cuda_preprocess(static_cast<uint8_t *>(roi_image.ptr()), roi_image.cols, roi_image.rows,
-                            static_cast<float *>(m_input_bindings[0]), m_input_bindshape[0][2], m_input_bindshape[0][3],
-                            m_cuda_stream);
-            cudaStreamSynchronize(m_cuda_stream);
+            preprocess(frame);
 
             // 推理
             inference();
@@ -78,6 +73,8 @@ namespace perception
                 cudaFree(m_output_bindings[i]);
             }
 
+            cudaFree(m_nv12_device);
+            cudaFree(m_bgr_crop_device);
             m_trt_engine.reset();
             return true;
         }
@@ -105,6 +102,50 @@ namespace perception
                     m_output_bindshape.push_back(shape);
                 }
             }
+        }
+
+        void TrafficLightDetection::preprocess(CameraFrame *frame)
+        {
+            // frame->data_provider --> NV12 Format
+            cudaMemcpy(m_nv12_device, frame->data_provider, frame->width * frame->height * 3 / 2, cudaMemcpyHostToDevice);
+
+            int src_width = frame->width;
+            int src_height = frame->height;
+            base::RectI roi = frame->detection_roi;
+
+            Npp8u *pSrc[2];
+            pSrc[0] = static_cast<uint8_t *>(m_nv12_device) + roi.y * src_width + roi.x;
+            pSrc[1] = static_cast<uint8_t *>(m_nv12_device) + src_width * src_height + (roi.y * src_width / 2 + roi.x);
+
+            Npp8u *pDst;
+            pDst = static_cast<uint8_t *>(m_bgr_crop_device);
+
+            NppiSize oSizeROI;
+            oSizeROI.width = roi.width;
+            oSizeROI.height = roi.height;
+
+            // NV12 --> BGR and Crop
+            NppStatus status = nppiNV12ToBGR_8u_P2C3R(pSrc, src_width, pDst, roi.width * 3, oSizeROI);
+
+            // Debug NV12 --> BGR and Crop
+            // std::cout << status << std::endl;
+            // cudaDeviceSynchronize();
+            // cv::Mat roi_image(roi.height, roi.width, CV_8UC3, m_bgr_crop_device);
+            // cv::imwrite("roi.png", roi_image);
+
+            // Resize & packed2plane & div 255
+            int dist_width = m_input_bindshape[0][2];
+            int dist_height = m_input_bindshape[0][3];
+            preprocess::resize_bilinear_gpu(static_cast<float *>(m_input_bindings[0]), static_cast<uint8_t *>(m_bgr_crop_device),
+                                            dist_width, dist_height, roi.width, roi.height,
+                                            preprocess::tactics::GPU_BILINEAR_CENTER);
+            cudaDeviceSynchronize();
+
+            // Debug Resize & packed2plane & div 255
+            // cv::Mat input_image(dist_height, dist_width, CV_32FC1, m_input_bindings[0]);
+            // input_image = input_image * 255;
+            // cv::imwrite("input_image.png", input_image);
+            // exit(1);
         }
 
         void TrafficLightDetection::inference()

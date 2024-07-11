@@ -69,10 +69,21 @@ target_link_libraries(${PROJECT_NAME}
   traffic_light_postprocessor
 )
 
+set(INTERFACE_LIB ${PROJECT_NAME}_interface)
+add_library(${INTERFACE_LIB} SHARED
+  ${CMAKE_CURRENT_SOURCE_DIR}/traffic_light_interface.cpp
+)
+
+target_link_libraries(${INTERFACE_LIB}
+  ${PROJECT_NAME}
+  traffic_light_detector
+  traffic_light_postprocessor
+)
+
 # 安装库文件
 ##################################
 install(TARGETS
-  ${PROJECT_NAME}
+  ${PROJECT_NAME} ${INTERFACE_LIB}
   DESTINATION
   ${CMAKE_SOURCE_DIR}/lib/
 )

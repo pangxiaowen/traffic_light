@@ -53,7 +53,7 @@ include_directories(
 
 list(APPEND CODE_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/tensorrt/tensorrt.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/preprocess.cu
+    ${CMAKE_CURRENT_SOURCE_DIR}/trt_preprocess.cu
     ${CMAKE_CURRENT_SOURCE_DIR}/traffic_light_detector.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/plugin/yoloPlugins.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/plugin/yoloForward_nc.cu
@@ -69,6 +69,7 @@ target_link_libraries(${PROJECT_NAME}
     nvinfer_plugin
     dl
     ${CUDA_LIBRARIES}
+    ${CUDA_npp_LIBRARY}
     ${OpenCV_LIBS}
 )
 
