@@ -1,4 +1,8 @@
 .vscode
 build
 lib/
+data/
+data
 model/
+actual_data/
+actual_data

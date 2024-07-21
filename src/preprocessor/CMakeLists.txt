@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
-project(traffic_light_test)
+project(traffic_light_preprocessor)
 
 # 编译配置
 ################################
-
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
@@ -16,6 +15,7 @@ endif()
 
 if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
+    
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -23,36 +23,36 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC --std=c++14 -O2")
 endif()
+
+find_package(Eigen3 REQUIRED)
+find_package(OpenCV REQUIRED)
 ################################
 
 # 代码编译
 ################################
-find_package(OpenCV REQUIRED)
-find_package(CUDA REQUIRED)
-
 include_directories(
-  ${OpenCV_INCLUDE_DIRS}
-  ${CUDA_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-)
-
-link_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 list(APPEND CODE_SRC
-  main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/traffic_light_preprocessor.cpp
 )
 
-add_executable(${PROJECT_NAME} 
+add_library(${PROJECT_NAME} SHARED
     ${CODE_SRC}
 )
 
 target_link_libraries(${PROJECT_NAME}
   ${OpenCV_LIBS}
-  ${CUDA_LIBRARIES}
-  traffic_light
-  traffic_light_preprocessor
-  traffic_light_postprocessor
-  traffic_light_detector
 )
+##################################
+
+
+# 安装库文件
+##################################
+install(TARGETS
+  ${PROJECT_NAME}
+  DESTINATION
+  ${CMAKE_SOURCE_DIR}/lib/
+)
+####################################

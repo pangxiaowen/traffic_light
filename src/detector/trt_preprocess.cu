@@ -401,6 +401,45 @@ __global__ void warpaffine_BGR2RGB_kernel(
     }
 }
 
+__global__ void ARGB2BGR_Crop_Kernel(uint8_t *input, uint8_t *output, int offsetX, int offsetY,
+                                    int inWidth, int outWidth, int outHeight)
+{
+    const int out_x = blockIdx.x * blockDim.x + threadIdx.x;
+	const int out_y = blockIdx.y * blockDim.y + threadIdx.y;
+
+	if( out_x >= outWidth || out_y >= outHeight )
+		return;
+
+	const int in_x = out_x + offsetX;
+	const int in_y = out_y + offsetY;
+
+    int input_offset = (in_y * inWidth + in_x) * 4;
+    float r = input[input_offset];
+    float g = input[input_offset + 1];
+    float b = input[input_offset + 2];
+    float a = input[input_offset + 3];
+
+    a = a / 255.0f;
+    r = (1 - a) * 255 + a * r;
+    g = (1 - a) * 255 + a * g;
+    b = (1 - a) * 255 + a * b;
+
+    int output_offset = (out_y * outWidth + out_x) * 3;
+    output[output_offset] = b;
+    output[output_offset + 1] = g;
+    output[output_offset + 2] = r;
+
+}
+
+void ARGB2BGR_And_Crop_gpu(uint8_t *d_src, int srcW, int srcH, uint8_t *d_tar, int offsetX, int offsetY, int tarW, int tarH)
+{
+    dim3 dimBlock(32, 32, 1);
+    dim3 dimGrid(tarW / 32 + 1, tarH / 32 + 1, 1);
+
+    ARGB2BGR_Crop_Kernel<<<dimGrid, dimBlock>>>(d_src,d_tar,offsetX,offsetY,srcW,tarW,tarH);
+}
+
+
 void resize_bilinear_gpu(
     float* d_tar, uint8_t* d_src, 
     int tarW, int tarH, 

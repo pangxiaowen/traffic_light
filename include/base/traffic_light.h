@@ -28,12 +28,14 @@ namespace perception
 
         struct LightRegion
         {
-            Rect<int> projection_bbox;   // 投影框
+            Rect<int> projection_bbox;  // 投影框
             bool outside_image = false; // 是否再画面内
-            Rect<int> detection_bbox;    // 匹配上的检测框
+
+            Rect<int> detection_bbox; // 匹配上的检测框
 
             // 3d polygon
             std::vector<base::PointXYZID> points; // 三维空间的边界点
+            double width, height;                 // 三维空间的宽高
         };
 
         struct LightStatus

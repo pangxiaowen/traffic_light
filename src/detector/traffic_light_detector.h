@@ -18,7 +18,8 @@ namespace perception
 
         private:
             void create_binding_memory();
-            void preprocess(CameraFrame *frame);
+            void preprocess_nv12(CameraFrame *frame);
+            void preprocess_argb(CameraFrame *frame);
             void inference();
             void postprocess(CameraFrame *frame);
 
@@ -31,18 +32,21 @@ namespace perception
 
             // image mem
             void *m_nv12_device;
+            void *m_agrb_device;
             void *m_bgr_crop_device;
 
             // tensorrt
             cudaStream_t m_cuda_stream = nullptr;
             std::shared_ptr<TensorRT::Engine> m_trt_engine = nullptr;
 
-            // only one input
+            // input
             std::vector<void *> m_input_bindings;
             std::vector<std::vector<int>> m_input_bindshape;
-            // only output input
+            // output
             std::vector<void *> m_output_bindings;
             std::vector<std::vector<int>> m_output_bindshape;
+            // output host
+            std::vector<void *> m_output_bindings_host;
         };
     }
 }

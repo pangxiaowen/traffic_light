@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(traffic_light_test)
+project(coord_transform)
 
 # 编译配置
 ################################
@@ -28,16 +28,10 @@ endif()
 # 代码编译
 ################################
 find_package(OpenCV REQUIRED)
-find_package(CUDA REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 include_directories(
-  ${OpenCV_INCLUDE_DIRS}
-  ${CUDA_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-)
-
-link_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
+  ${EIGEN3_INCLUDE_DIRS}
 )
 
 list(APPEND CODE_SRC
@@ -50,9 +44,4 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   ${OpenCV_LIBS}
-  ${CUDA_LIBRARIES}
-  traffic_light
-  traffic_light_preprocessor
-  traffic_light_postprocessor
-  traffic_light_detector
 )

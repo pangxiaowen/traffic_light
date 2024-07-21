@@ -69,8 +69,9 @@ namespace preprocess
     extern TransInfo trans;
     extern AffineMatrix affine_matrix;
 
-    void resize_bilinear_gpu(float *d_tar, uint8_t *d_src, int tarW, int tarH, int srcH, int srcW, float *mean, float *std, tactics tac);
-    void resize_bilinear_gpu(float *d_tar, uint8_t *d_src, int tarW, int tarH, int srcH, int srcW, tactics tac);
+    void resize_bilinear_gpu(float *d_tar, uint8_t *d_src, int tarW, int tarH, int srcW, int srcH, float *mean, float *std, tactics tac);
+    void resize_bilinear_gpu(float *d_tar, uint8_t *d_src, int tarW, int tarH, int srcW, int srcH, tactics tac);
+    void ARGB2BGR_And_Crop_gpu(uint8_t *d_src, int srcW, int srcH, uint8_t *d_tar, int offsetX, int offsetY, int tarW, int tarH);
 
     __host__ __device__ void affine_transformation(float *trans_matrix, int src_x, int src_y, float *tar_x, float *tar_y);
 

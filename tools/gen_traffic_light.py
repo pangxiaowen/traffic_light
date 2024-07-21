@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 #图片路径
-img = cv2.imread('/home/pxw/project/traffic_light/tools/CAM_FRONT_1719754153690047.jpg')
+img = cv2.imread('/home/pxw/Downloads/traffic_data/tl_data/front_jpg_1/CAM_FRONT_1720672238344149.jpg')
 a =[]
 b = []
 def on_EVENT_LBUTTONDOWN(event, x, y, flags, param):

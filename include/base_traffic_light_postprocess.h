@@ -10,7 +10,7 @@ namespace perception
         {
             int track_frame_rate = 30;
             int track_buffer = 15;
-            int min_number_of_track = 10;
+            int min_number_of_track = 5;
         };
 
         class BaseTrafficLightPostProcess

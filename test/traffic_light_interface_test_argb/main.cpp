@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <opencv2/opencv.hpp>
+#include <cuda_runtime.h>
 
 cv::Mat converBGR2NV12(cv::Mat bgrImage)
 {
@@ -37,11 +38,15 @@ int main(int argc, char **argv)
 
     // 读取文件夹下所有图像
     std::vector<std::string> file_names;
-    std::string pattern = "/home/pxw/project/data/tl/front_2/front_2";
+    std::string pattern = "/home/pxw/project/traffic_light/data";
     cv::glob(pattern, file_names, false);
 
     // 存为视频
-    cv::VideoWriter videoWriter("./front_2.mp4", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30, cv::Size(3840, 2160));
+    cv::VideoWriter videoWriter("./front_jpg_2.mp4", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30, cv::Size(3840, 2160));
+
+    // 分配cuda内存
+    void *image_data;
+    cudaMallocManaged(&image_data, 3840 * 2160 * 4 * sizeof(uint8_t), cudaMemAttachGlobal);
 
     for (auto it : file_names)
     {
@@ -49,11 +54,15 @@ int main(int argc, char **argv)
         if (bgrImage.cols != 3840 || bgrImage.rows != 2160)
             continue;
 
-        // BGR2NV12
-        cv::Mat nv12Image = converBGR2NV12(bgrImage);
+        // BGR2ARGB
+        cv::Mat argbImage;
+        cv::cvtColor(bgrImage, argbImage, cv::COLOR_BGR2RGBA);
+
+        // Host2Device
+        cudaMemcpy(image_data, argbImage.ptr(), bgrImage.cols * bgrImage.rows * 4, cudaMemcpyHostToDevice);
 
         perception::interface::TrafficLightInterfaceInput input;
-        input.image_data = nv12Image.ptr();
+        input.image_data = image_data;
         input.width = bgrImage.cols;
         input.height = bgrImage.rows;
 
@@ -83,10 +92,10 @@ int main(int argc, char **argv)
                 color = cv::Scalar(0, 0, 255);
                 break;
             case 2:
-                color = cv::Scalar(0, 255, 0);
+                color = cv::Scalar(0, 255, 255);
                 break;
             case 3:
-                color = cv::Scalar(0, 255, 255);
+                color = cv::Scalar(0, 255, 0);
                 break;
             default:
                 color = cv::Scalar(0, 0, 0);
@@ -94,7 +103,7 @@ int main(int argc, char **argv)
             }
 
             cv::rectangle(bgrImage, detect_roi, color, 2);
-            cv::rectangle(bgrImage, {1150, 450, 960, 960}, {0, 0, 255}, 5);
+            cv::rectangle(bgrImage, {960, 270, 1920, 1080}, {0, 0, 255}, 5);
 
             std::stringstream ss;
             ss << it.id;

@@ -48,6 +48,7 @@ find_package(CUDA REQUIRED)
 
 add_subdirectory(detector)
 add_subdirectory(postprocessor)
+add_subdirectory(preprocessor)
 
 include_directories(
   ${EIGEN3_INCLUDE_DIRS}
@@ -76,6 +77,7 @@ add_library(${INTERFACE_LIB} SHARED
 
 target_link_libraries(${INTERFACE_LIB}
   ${PROJECT_NAME}
+  traffic_light_preprocessor
   traffic_light_detector
   traffic_light_postprocessor
 )

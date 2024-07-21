@@ -8,16 +8,22 @@ namespace perception
 {
   namespace camera
   {
+    struct CarPose
+    {
+      double x, y, z, yaw;
+    };
+
     struct CameraFrame
     {
       // timestamp
       double timestamp = 0.0;
+
       // frame sequence id
       int frame_id = 0;
 
       // data provider
       int width, height;
-      void *data_provider = nullptr;
+      void *data_provider = nullptr; // 数据位于GPU端
 
       // ROI
       base::Rect<int> detection_roi;
@@ -31,10 +37,8 @@ namespace perception
       // project traffic lights
       std::vector<base::TrafficLightPtr> traffic_lights;
 
-      // camera intrinsics
-      // Eigen::Matrix3f camera_k_matrix = Eigen::Matrix3f::Identity();
-      // // camera extrinsics
-      // Eigen::Matrix4d camera_extrinsic = Eigen::Matrix4d::Identity();
+      // Car Info
+      CarPose car_pose;
     };
 
   } // namespace camera

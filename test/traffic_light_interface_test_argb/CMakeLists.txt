@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(traffic_light_test)
+project(traffic_light_interface_test)
 
 # 编译配置
 ################################
@@ -19,7 +19,7 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC --std=c++14 -g -ggdb")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC --std=c++14 -g -ggdb -O0")
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC --std=c++14 -O2")
 endif()
@@ -33,7 +33,7 @@ find_package(CUDA REQUIRED)
 include_directories(
   ${OpenCV_INCLUDE_DIRS}
   ${CUDA_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../interface
 )
 
 link_directories(
@@ -52,6 +52,7 @@ target_link_libraries(${PROJECT_NAME}
   ${OpenCV_LIBS}
   ${CUDA_LIBRARIES}
   traffic_light
+  traffic_light_interface
   traffic_light_preprocessor
   traffic_light_postprocessor
   traffic_light_detector
