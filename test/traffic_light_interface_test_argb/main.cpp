@@ -48,6 +48,22 @@ int main(int argc, char **argv)
     void *image_data;
     cudaMallocManaged(&image_data, 3840 * 2160 * 4 * sizeof(uint8_t), cudaMemAttachGlobal);
 
+    // 红绿灯位置信息
+    perception::interface::TrafficLightInfo tl_1;
+    tl_1.tl_3d_bbox.push_back({6120.224311316056, 8926.692219366063, 30.657984679563395});
+    tl_1.width = 0.655106;
+    tl_1.height = 1.61742;
+    tl_1.turn_info = 0;
+
+    perception::interface::TrafficLightInfo tl_2;
+    tl_2.tl_3d_bbox.push_back({6122.269526667129, 8926.921721728417, 30.640411978580715});
+    tl_2.width = 0.822632;
+    tl_2.height = 1.61742;
+    tl_2.turn_info = 1.59562;
+
+    // 自车姿态
+    perception::interface::VehicleInfo vehicle_info{6121.2841387552035, 8901.53482125327, 26.670000000000208, 1.6885217519016429};
+
     for (auto it : file_names)
     {
         cv::Mat bgrImage = cv::imread(it);
@@ -65,6 +81,9 @@ int main(int argc, char **argv)
         input.image_data = image_data;
         input.width = bgrImage.cols;
         input.height = bgrImage.rows;
+        input.vehicle_info = vehicle_info;
+        input.traffic_infos.push_back(tl_1);
+        input.traffic_infos.push_back(tl_2);
 
         perception::interface::TrafficLightInterfaceOuput ouput;
 
@@ -79,11 +98,11 @@ int main(int argc, char **argv)
         for (auto it : ouput.traffic_infos)
         {
             auto res = it;
-            cv::Rect detect_roi{it.x, it.y, it.width, it.height};
+            cv::Rect detect_bbox{it.x, it.y, it.width, it.height};
 
             std::cout << "ID: " << it.id
                       << " Color: " << static_cast<int>(it.color)
-                      << " Detect Rect: " << detect_roi << std::endl;
+                      << " Detect Rect: " << detect_bbox << std::endl;
 
             cv::Scalar color;
             switch (it.color)
@@ -102,14 +121,12 @@ int main(int argc, char **argv)
                 break;
             }
 
-            cv::rectangle(bgrImage, detect_roi, color, 2);
-            cv::rectangle(bgrImage, {960, 270, 1920, 1080}, {0, 0, 255}, 5);
+            cv::rectangle(bgrImage, detect_bbox, color, 2);
 
             std::stringstream ss;
-            ss << it.id;
-            cv::putText(bgrImage, ss.str(), cv::Point(detect_roi.x, detect_roi.y - 1), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0xFF, 0xFF, 0xFF), 2);
+            ss << it.id << " " << it.turn_info;
+            cv::putText(bgrImage, ss.str(), cv::Point(detect_bbox.x, detect_bbox.y - 1), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0xFF, 0xFF, 0xFF), 2);
         }
-
         videoWriter.write(bgrImage);
     }
 

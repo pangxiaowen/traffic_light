@@ -59,15 +59,20 @@ namespace perception
             m_traffic_light->process(&frame);
 
             // 处理输出数据
-            for (auto it : frame.track_detected_bboxes)
+            for (auto it : frame.traffic_lights)
             {
                 TrafficLightInfo info;
                 info.id = it->status.track_id;
-                info.color = static_cast<int>(it->status.color);
                 info.x = it->region.detection_bbox.x;
                 info.y = it->region.detection_bbox.y;
                 info.width = it->region.detection_bbox.width;
                 info.height = it->region.detection_bbox.height;
+                info.color = static_cast<int>(it->status.color);
+                info.turn_info = static_cast<int>(it->status.signal);
+                for (auto point : it->region.points)
+                {
+                    info.tl_3d_bbox.push_back({point.x, point.y, point.z});
+                }
                 output.traffic_infos.push_back(info);
             }
         }

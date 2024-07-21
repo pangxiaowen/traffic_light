@@ -85,11 +85,17 @@ namespace perception
                     detection_roi = detection_roi | it;
                 }
 
-                // 扩大ROI区域
-                detection_roi.x = detection_roi.x - detection_roi.width * 4;
-                detection_roi.y = detection_roi.y - detection_roi.height * 4;
-                detection_roi.width = detection_roi.width * 10 > 640 ? detection_roi.width * 10 : 640;
-                detection_roi.height = detection_roi.height * 10 > 640 ? detection_roi.height * 10 : 640;
+                // 固定ROI区域 640x640
+                detection_roi.x = detection_roi.x - 320;
+                detection_roi.y = detection_roi.y - 320;
+                detection_roi.width = 640;
+                detection_roi.height = 640;
+                
+                // 自定义动态ROI TODO
+                // detection_roi.x = detection_roi.x - detection_roi.width * 4;
+                // detection_roi.y = detection_roi.y - detection_roi.height * 4;
+                // detection_roi.width = detection_roi.width * 10 > 640 ? detection_roi.width * 10 : 640;
+                // detection_roi.height = detection_roi.height * 10 > 640 ? detection_roi.height * 10 : 640;
             }
             else // 如果没有投影框，则选用默认的ROI区域
             {
