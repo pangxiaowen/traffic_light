@@ -16,14 +16,17 @@ namespace perception
             TL_TOTAL_COLOR_NUM = 5
         };
 
-        enum class TLSignal
+        enum class TLType
         {
-            TL_UNKNOWN_SIGNAL = 0,
-            TL_STRAIGHT = 0,
-            TL_TURN_LEFT = 1,
-            TL_TURN_RIGHT = 2,
-            TL_STRAIGHT_LEFT = 3,
-            TL_STRAIGHT_RIGHT = 4,
+            STRAIGHT = 0,
+            TURN_LEFT = 1,
+            TURN_RIGHT = 2,
+            STRAIGHT_TURN_LEFT = 3,
+            STRAIGHT_TURN_RIGHT = 4,
+            CIRCULAR = 5,
+            PEDESTRIAN = 6,
+            CYCLIST = 7,
+            UNKNOWN = 8,
         };
 
         struct LightRegion
@@ -43,7 +46,7 @@ namespace perception
             // Traffic light color status.
             TLColor color = TLColor::TL_UNKNOWN_COLOR;
             // 该信号灯是左转,直行,右转
-            TLSignal signal = TLSignal::TL_UNKNOWN_SIGNAL;
+            TLType type = TLType::UNKNOWN;
             // How confidence about the detected results, between 0 and 1.
             double confidence = 0.0;
             // track id

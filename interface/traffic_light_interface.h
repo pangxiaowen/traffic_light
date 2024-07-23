@@ -19,10 +19,11 @@ namespace perception
             int id;
             int x, y, width, height;
             int color = 0; // UNKNOWN = 0; RED = 1; YELLOW = 2; GREEN = 3; BLACK = 4;
+            float confidence = 0.0;
 
             // 来自外部输入
             std::vector<Point3D> tl_3d_bbox; // UTM 坐标系 x, y, z, 边界框的四个点
-            int turn_info;                   // straight = 0 left = 1  right = 2  straight_left = 3 straight_right = 4
+            int type;                     // STRAIGHT = 0;TURN_LEFT = 1;TURN_RIGHT = 2;STRAIGHT_TURN_LEFT = 3;STRAIGHT_TURN_RIGHT =4;CIRCULAR = 5;PEDESTRIAN = 6;CYCLIST = 7;UNKNOWN = 8;
         };
 
         struct VehicleInfo

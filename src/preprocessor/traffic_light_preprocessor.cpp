@@ -90,7 +90,9 @@ namespace perception
                 detection_roi.y = detection_roi.y - 320;
                 detection_roi.width = 640;
                 detection_roi.height = 640;
-                
+
+                std::cout << detection_roi.ToStr() << std::endl;
+
                 // 自定义动态ROI TODO
                 // detection_roi.x = detection_roi.x - detection_roi.width * 4;
                 // detection_roi.y = detection_roi.y - detection_roi.height * 4;

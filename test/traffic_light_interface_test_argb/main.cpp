@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
     // 读取文件夹下所有图像
     std::vector<std::string> file_names;
-    std::string pattern = "/home/pxw/project/traffic_light/data";
+    std::string pattern = "/home/pxw/project/tl_data/test";
     cv::glob(pattern, file_names, false);
 
     // 存为视频
@@ -53,13 +53,13 @@ int main(int argc, char **argv)
     tl_1.tl_3d_bbox.push_back({6120.224311316056, 8926.692219366063, 30.657984679563395});
     tl_1.width = 0.655106;
     tl_1.height = 1.61742;
-    tl_1.turn_info = 0;
+    tl_1.type = 0;
 
     perception::interface::TrafficLightInfo tl_2;
     tl_2.tl_3d_bbox.push_back({6122.269526667129, 8926.921721728417, 30.640411978580715});
     tl_2.width = 0.822632;
     tl_2.height = 1.61742;
-    tl_2.turn_info = 1.59562;
+    tl_2.type = 0;
 
     // 自车姿态
     perception::interface::VehicleInfo vehicle_info{6121.2841387552035, 8901.53482125327, 26.670000000000208, 1.6885217519016429};
@@ -67,8 +67,8 @@ int main(int argc, char **argv)
     for (auto it : file_names)
     {
         cv::Mat bgrImage = cv::imread(it);
-        if (bgrImage.cols != 3840 || bgrImage.rows != 2160)
-            continue;
+        // if (bgrImage.cols != 3840 || bgrImage.rows != 2160)
+        //     continue;
 
         // BGR2ARGB
         cv::Mat argbImage;
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
             cv::rectangle(bgrImage, detect_bbox, color, 2);
 
             std::stringstream ss;
-            ss << it.id << " " << it.turn_info;
+            ss << it.id << " " << it.type;
             cv::putText(bgrImage, ss.str(), cv::Point(detect_bbox.x, detect_bbox.y - 1), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0xFF, 0xFF, 0xFF), 2);
         }
         videoWriter.write(bgrImage);

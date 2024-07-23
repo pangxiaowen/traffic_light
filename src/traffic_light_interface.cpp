@@ -52,7 +52,8 @@ namespace perception
 
                 tl_info->region.width = it.width;
                 tl_info->region.height = it.height;
-                tl_info->status.signal = static_cast<base::TLSignal>(it.turn_info);
+                tl_info->status.type = static_cast<base::TLType>(it.type);
+                frame.traffic_lights.push_back(tl_info);
             }
 
             // 红绿灯识别
@@ -67,8 +68,9 @@ namespace perception
                 info.y = it->region.detection_bbox.y;
                 info.width = it->region.detection_bbox.width;
                 info.height = it->region.detection_bbox.height;
+                info.confidence = it->status.confidence;
                 info.color = static_cast<int>(it->status.color);
-                info.turn_info = static_cast<int>(it->status.signal);
+                info.type = static_cast<int>(it->status.type);
                 for (auto point : it->region.points)
                 {
                     info.tl_3d_bbox.push_back({point.x, point.y, point.z});
