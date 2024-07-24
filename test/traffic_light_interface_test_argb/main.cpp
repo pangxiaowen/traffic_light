@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 {
 
     perception::interface::TrafficLightInterfaceParams params;
-    params.model_path = "/home/pxw/project/traffic_light/model/s2tld_epoch100.trt";
+    params.config_path = "/home/pxw/project/traffic_light/configs/traffic_light_config.yaml";
 
     perception::interface::TrafficLightInterface traffic_light;
     traffic_light.init(params);
@@ -51,14 +51,14 @@ int main(int argc, char **argv)
     // 红绿灯位置信息
     perception::interface::TrafficLightInfo tl_1;
     tl_1.tl_3d_bbox.push_back({6120.224311316056, 8926.692219366063, 30.657984679563395});
-    tl_1.width = 0.655106;
-    tl_1.height = 1.61742;
+    tl_1.tl_width = 0.655106;
+    tl_1.tl_height = 1.61742;
     tl_1.type = 0;
 
     perception::interface::TrafficLightInfo tl_2;
     tl_2.tl_3d_bbox.push_back({6122.269526667129, 8926.921721728417, 30.640411978580715});
-    tl_2.width = 0.822632;
-    tl_2.height = 1.61742;
+    tl_2.tl_width = 0.822632;
+    tl_2.tl_height = 1.61742;
     tl_2.type = 0;
 
     // 自车姿态

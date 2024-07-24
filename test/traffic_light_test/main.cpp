@@ -11,7 +11,17 @@ int main(int argc, char **argv)
 {
     // 初始化红绿灯模块
     perception::camera::TrafficLightParameter params;
-    params.detector_params.model_path = "/home/pxw/project/traffic_light/model/s2tld_epoch100.trt";
+    params.detector_params.model_path = "/home/pxw/project/traffic_light/model/build/engines/df_tl.engine";
+
+    params.preprocess_params.camera_intrinsics = {675.466713720245, 0, 647.387385423985, 0,
+                                                  0, 678.957501724718, 356.804618676128, 0,
+                                                  0, 0, 1, 0,
+                                                  0, 0, 0, 1};
+    params.preprocess_params.camera2ego = {
+        -0.05529270928380491, -0.08737339761267134, 0.9946395789567097, 1.4671017894905598,
+        -0.9983053628761077, 0.022937879337663676, -0.05348151809360546, -0.056925327489644635,
+        -0.018142107313755842, -0.9959111319958205, -0.08849368100414383, 1.3137434155143959,
+        0, 0, 0, 1};
 
     perception::camera::TrafficLight traffic_light;
     traffic_light.init(params);

@@ -45,6 +45,7 @@ endif()
 find_package(Eigen3 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(CUDA REQUIRED)
+find_package(yaml_cpp_vendor REQUIRED)
 
 add_subdirectory(detector)
 add_subdirectory(postprocessor)
@@ -72,11 +73,13 @@ target_link_libraries(${PROJECT_NAME}
 
 set(INTERFACE_LIB ${PROJECT_NAME}_interface)
 add_library(${INTERFACE_LIB} SHARED
+  ${CMAKE_CURRENT_SOURCE_DIR}/parse_configs.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/traffic_light_interface.cpp
 )
 
 target_link_libraries(${INTERFACE_LIB}
   ${PROJECT_NAME}
+  yaml-cpp
   traffic_light_preprocessor
   traffic_light_detector
   traffic_light_postprocessor

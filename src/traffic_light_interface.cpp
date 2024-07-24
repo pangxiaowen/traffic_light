@@ -2,6 +2,7 @@
 
 #include "traffic_light_interface.h"
 #include "traffic_light.h"
+#include "parse_configs.h"
 
 namespace perception
 {
@@ -23,8 +24,13 @@ namespace perception
         {
             m_params = params;
 
+            camera::config::TrafficLightConfig config;
+            config.Parse(params.config_path);
+
             perception::camera::TrafficLightParameter tl_params;
-            tl_params.detector_params.model_path = m_params.model_path;
+            tl_params.preprocess_params = config.m_preprocess_params;
+            tl_params.detector_params = config.m_detector_params;
+            tl_params.postprocess_params = config.m_postprocess_params;
 
             m_traffic_light = std::make_shared<camera::TrafficLight>();
             m_traffic_light->init(tl_params);
@@ -50,8 +56,8 @@ namespace perception
                     tl_info->region.points.push_back({point.x, point.y, point.z, 0});
                 }
 
-                tl_info->region.width = it.width;
-                tl_info->region.height = it.height;
+                tl_info->region.width = it.tl_width;
+                tl_info->region.height = it.tl_height;
                 tl_info->status.type = static_cast<base::TLType>(it.type);
                 frame.traffic_lights.push_back(tl_info);
             }
@@ -75,6 +81,8 @@ namespace perception
                 {
                     info.tl_3d_bbox.push_back({point.x, point.y, point.z});
                 }
+                info.tl_width = it->region.width;
+                info.tl_height = it->region.height;
                 output.traffic_infos.push_back(info);
             }
         }

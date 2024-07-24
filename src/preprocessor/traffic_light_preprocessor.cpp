@@ -8,17 +8,30 @@ namespace perception
         bool TrafficLightPreProcessor::init(const TrafficLightPreProcessParameter &params)
         {
             // 初始化相机内参
-            m_camera_intrinsics << 675.466713720245, 0, 647.387385423985, 0,
-                0, 678.957501724718, 356.804618676128, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1;
+            if (params.camera_intrinsics.size() < 4 * 4)
+            {
+                std::cout << "The camera intrinsic matrix is not 4 x 4" << std::endl;
+                exit(1);
+            }
+            else
+            {
+                m_camera_intrinsics = Eigen::Matrix4d(params.camera_intrinsics.data()).transpose();
+                std::cout << "Camera Intrinsic Matrix: \n"
+                          << m_camera_intrinsics << std::endl;
+            }
 
             // 初始化相机外参
-            m_camera2ego << -0.05529270928380491, -0.08737339761267134, 0.9946395789567097, 1.4671017894905598,
-                -0.9983053628761077, 0.022937879337663676, -0.05348151809360546, -0.056925327489644635,
-                -0.018142107313755842, -0.9959111319958205, -0.08849368100414383, 1.3137434155143959,
-                0, 0, 0, 1;
-
+            if (params.camera2ego.size() < 4 * 4)
+            {
+                std::cout << "The camera2ego matrix is not 4 x 4" << std::endl;
+                exit(1);
+            }
+            else
+            {
+                m_camera2ego = Eigen::Matrix4d(params.camera2ego.data()).transpose();
+                std::cout << "Camera2Ego Matrix: \n"
+                          << m_camera2ego << std::endl;
+            }
             m_ego2image = m_camera_intrinsics * m_camera2ego.inverse();
 
             return true;
@@ -75,7 +88,6 @@ namespace perception
 
             // 根据投影框计算ROI
             base::RectI detection_roi;
-            base::RectI src_image_size = {0, 0, frame->width, frame->height};
             if (!tl_projection_bboxs.empty())
             {
                 // 计算一个能覆盖所有投影框的ROI区域
@@ -86,12 +98,10 @@ namespace perception
                 }
 
                 // 固定ROI区域 640x640
-                detection_roi.x = detection_roi.x - 320;
-                detection_roi.y = detection_roi.y - 320;
+                detection_roi.x = detection_roi.Center().x - 320;
+                detection_roi.y = detection_roi.Center().y - 320;
                 detection_roi.width = 640;
                 detection_roi.height = 640;
-
-                std::cout << detection_roi.ToStr() << std::endl;
 
                 // 自定义动态ROI TODO
                 // detection_roi.x = detection_roi.x - detection_roi.width * 4;
@@ -105,7 +115,9 @@ namespace perception
             }
 
             // 防止越界
+            base::RectI src_image_size = {0, 0, frame->width, frame->height};
             detection_roi = detection_roi & src_image_size;
+
             frame->detection_roi = detection_roi;
         }
 

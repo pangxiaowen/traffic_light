@@ -8,6 +8,8 @@ namespace perception
     {
         struct TrafficLightPreProcessParameter
         {
+            std::vector<double> camera_intrinsics; // 相机内参
+            std::vector<double> camera2ego; // 相机到自车外参
         };
 
         class BaseTrafficLightPreProcess
