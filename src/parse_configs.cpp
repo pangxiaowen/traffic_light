@@ -1,5 +1,4 @@
 #include "parse_configs.h"
-#include <yaml-cpp/yaml.h>
 #include <iostream>
 
 #define TRY(statement)   \
