@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(traffic_light_test)
+project(parse_json)
 
 # 编译配置
 ################################
@@ -28,18 +28,7 @@ endif()
 # 代码编译
 ################################
 find_package(OpenCV REQUIRED)
-find_package(CUDA REQUIRED)
 find_package(Boost REQUIRED)
-
-include_directories(
-  ${OpenCV_INCLUDE_DIRS}
-  ${CUDA_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-)
-
-link_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
-)
 
 list(APPEND CODE_SRC
   main.cpp
@@ -50,11 +39,5 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-  ${OpenCV_LIBS}
-  ${CUDA_LIBRARIES}
-  traffic_light
-  traffic_light_preprocessor
-  traffic_light_postprocessor
-  traffic_light_detector
-  boost_filesystem
+  ${Boost_LIBS}
 )

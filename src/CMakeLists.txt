@@ -45,7 +45,6 @@ endif()
 find_package(Eigen3 REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(CUDA REQUIRED)
-find_package(yaml_cpp_vendor REQUIRED)
 
 add_subdirectory(detector)
 add_subdirectory(postprocessor)

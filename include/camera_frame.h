@@ -10,6 +10,7 @@ namespace perception
   {
     struct CarPose
     {
+      double time_stamp;
       double x, y, z, yaw;
     };
 
@@ -26,7 +27,7 @@ namespace perception
       void *data_provider = nullptr; // 数据位于GPU端
 
       // ROI
-      base::Rect<int> detection_roi;
+      base::Rect<int> detection_roi = {0, 0, 0, 0};
 
       // detected traffic lights bbox
       std::vector<base::TrafficLightPtr> detected_bboxes;

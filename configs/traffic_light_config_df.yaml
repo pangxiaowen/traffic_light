@@ -1,0 +1,26 @@
+Traffic_Light_Preprocessor:
+  Camera_Intrinsic:
+    [
+      [2425.953125, 0.0, 1920.06396484375, 0],
+      [0.0, 2425.725341796875, 1082.137939453125, 0],
+      [0, 0, 1, 0],
+      [0, 0, 0, 1],
+    ]
+
+  Camera2Ego:
+    [
+      [-0.01696487, -0.00873035,  0.99981797,  1.84701157],
+      [-0.99974738,  0.01489341, -0.01683363, -0.08812751],
+      [-0.01474373, -0.99985097, -0.00898081,  1.30374217],
+      [0, 0, 0, 1],
+    ]
+
+Traffic_Light_Detector:
+  Model_Path: "/home/pxw/project/traffic_light/model/s2tld_epoch100.trt"
+  Class_Bbox_Thresh: 0.7
+  NMS_Thresh: 0.45
+
+Traffic_Light_PostProcessor:
+  Track_Frame_Rate: 30
+  Track_Buffer: 15
+  Min_Number_Of_Track: 5

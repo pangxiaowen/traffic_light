@@ -29,6 +29,7 @@ namespace perception
 
         struct VehicleInfo
         {
+            double time_stamp;   // 时间戳
             double x, y, z, yaw; // UTM 坐标系
         };
 

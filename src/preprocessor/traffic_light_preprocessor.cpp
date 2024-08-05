@@ -33,7 +33,6 @@ namespace perception
                           << m_camera2ego << std::endl;
             }
             m_ego2image = m_camera_intrinsics * m_camera2ego.inverse();
-
             return true;
         }
 
@@ -66,8 +65,11 @@ namespace perception
                 {
                     // 计算红绿灯中心点在自车坐标系下的位置
                     Eigen::Vector3d tl_utm_position = {utm_position.x, utm_position.y, utm_position.z};
-
                     Eigen::Vector3d tl_ego_position = cur_quaternion.inverse() * (tl_utm_position - cur_position);
+
+                    // 如果信号灯在车后方，则跳过处理
+                    if (tl_ego_position[0] < 0)
+                        continue;
 
                     // 根据中心点以及宽高计算红绿灯左上和右下角点的位置, 并转为4维，方便后续计算
                     Eigen::Vector4d ego_top_left_point{tl_ego_position.x(), tl_ego_position.y() + width_offset, tl_ego_position.z() + height_offset, 1};
@@ -79,6 +81,14 @@ namespace perception
                     base::RectI projection_bbox{image_top_left_point.x, image_top_left_point.y,
                                                 image_bottom_right_point.x - image_top_left_point.x,
                                                 image_bottom_right_point.y - image_top_left_point.y};
+
+                    // 判断中心点是否在画面内
+                    auto center_point = projection_bbox.Center();
+                    if (center_point.x < 0 || center_point.y < 0 || center_point.x > frame->width || center_point.y > frame->height)
+                    {
+                        it->region.outside_image = true;
+                        continue;
+                    }
 
                     // 保存投影框
                     it->region.projection_bbox = projection_bbox;
@@ -98,10 +108,12 @@ namespace perception
                 }
 
                 // 固定ROI区域 640x640
-                detection_roi.x = detection_roi.Center().x - 320;
-                detection_roi.y = detection_roi.Center().y - 320;
-                detection_roi.width = 640;
-                detection_roi.height = 640;
+                detection_roi.x = detection_roi.Center().x - 480;
+                detection_roi.x = detection_roi.x > 0 ? detection_roi.x : 0;
+                detection_roi.y = detection_roi.Center().y - 480;
+                detection_roi.y = detection_roi.y > 0 ? detection_roi.y : 0;
+                detection_roi.width = 960;
+                detection_roi.height = 960;
 
                 // 自定义动态ROI TODO
                 // detection_roi.x = detection_roi.x - detection_roi.width * 4;
@@ -111,13 +123,13 @@ namespace perception
             }
             else // 如果没有投影框，则选用默认的ROI区域
             {
-                detection_roi = perception::base::Rect<int>{960, 270, 1920, 1080};
+                // detection_roi = perception::base::Rect<int>{960, 270, 1920, 1080};
+                detection_roi = perception::base::Rect<int>{0, 0, 0, 0};
             }
 
-            // 防止越界
+            // 保证检测区域在画面内
             base::RectI src_image_size = {0, 0, frame->width, frame->height};
             detection_roi = detection_roi & src_image_size;
-
             frame->detection_roi = detection_roi;
         }
 

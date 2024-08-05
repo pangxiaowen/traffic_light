@@ -52,6 +52,10 @@ namespace perception
 
         void TrafficLightDetection::process(CameraFrame *frame)
         {
+            // 检测区域过小，则不进行检测
+            if (frame->detection_roi.Area() < 40 * 40)
+                return;
+
             // 预处理
             preprocess_argb(frame);
 

@@ -22,9 +22,9 @@ namespace perception
 
         void TrafficLightPostProcess::process(CameraFrame *frame)
         {
+            // 检测框为空则跳过后处理
             if (frame->detected_bboxes.empty())
                 return;
-
             // bytetrack
             track(frame);
             // 根据track id进行过滤, 连续检测到多次，再进行后续处理

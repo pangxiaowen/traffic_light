@@ -41,11 +41,11 @@ namespace perception
         void TrafficLightInterfaceImpl::process(const TrafficLightInterfaceInput &input, TrafficLightInterfaceOuput &output)
         {
             // 处理输入数据
-            perception::camera::CameraFrame frame;
-            frame.data_provider = input.image_data;
-            frame.width = input.width;
-            frame.height = input.height;
-            frame.car_pose = {input.vehicle_info.x, input.vehicle_info.y, input.vehicle_info.z, input.vehicle_info.yaw};
+            std::shared_ptr<perception::camera::CameraFrame> frame = std::make_shared<perception::camera::CameraFrame>();
+            frame->data_provider = input.image_data;
+            frame->width = input.width;
+            frame->height = input.height;
+            frame->car_pose = {input.vehicle_info.x, input.vehicle_info.y, input.vehicle_info.z, input.vehicle_info.yaw};
 
             for (auto it : input.traffic_infos)
             {
@@ -59,14 +59,14 @@ namespace perception
                 tl_info->region.width = it.tl_width;
                 tl_info->region.height = it.tl_height;
                 tl_info->status.type = static_cast<base::TLType>(it.type);
-                frame.traffic_lights.push_back(tl_info);
+                frame->traffic_lights.push_back(tl_info);
             }
 
             // 红绿灯识别
-            m_traffic_light->process(&frame);
+            m_traffic_light->process(frame.get());
 
             // 处理输出数据
-            for (auto it : frame.traffic_lights)
+            for (auto it : frame->traffic_lights)
             {
                 TrafficLightInfo info;
                 info.id = it->status.track_id;
