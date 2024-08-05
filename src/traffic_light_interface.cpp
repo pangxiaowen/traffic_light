@@ -45,7 +45,12 @@ namespace perception
             frame->data_provider = input.image_data;
             frame->width = input.width;
             frame->height = input.height;
-            frame->car_pose = {input.vehicle_info.x, input.vehicle_info.y, input.vehicle_info.z, input.vehicle_info.yaw};
+
+            frame->car_pose.time_stamp = 0;
+            frame->car_pose.x = input.vehicle_info.x;
+            frame->car_pose.y = input.vehicle_info.y;
+            frame->car_pose.z = input.vehicle_info.z;
+            frame->car_pose.yaw = input.vehicle_info.yaw;
 
             for (auto it : input.traffic_infos)
             {
@@ -53,7 +58,7 @@ namespace perception
 
                 for (auto point : it.tl_3d_bbox)
                 {
-                    tl_info->region.points.push_back({point.x, point.y, point.z, 0});
+                    tl_info->region.points.push_back({point.x, point.y, point.z});
                 }
 
                 tl_info->region.width = it.tl_width;

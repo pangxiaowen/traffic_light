@@ -45,7 +45,7 @@ std::vector<perception::interface::TrafficLightInfo> select_tl_by_distance(std::
     {
         // 距离当前车辆80m以内的红绿灯
         double distance = std::pow(it.tl_3d_bbox[0].x - vehicle_info.x, 2) + std::pow(it.tl_3d_bbox[0].y - vehicle_info.y, 2);
-        if (distance < 100 * 100 && distance > 5 * 5)
+        if (distance < 100 * 100)
         {
             select_tl_infos.push_back(it);
         }
@@ -99,7 +99,7 @@ std::vector<perception::interface::VehicleInfo> load_vehicle_info(const std::str
             }
             heading = -heading;
 
-            vehicle_info.yaw = heading;
+            vehicle_info.yaw = heading / 180 * M_PI;
         }
 
         vehicle_infos.push_back(vehicle_info);

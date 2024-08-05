@@ -16,11 +16,11 @@ Traffic_Light_Preprocessor:
     ]
 
 Traffic_Light_Detector:
-  Model_Path: "/home/pxw/project/traffic_light/model/s2tld_epoch100.trt"
+  Model_Path: "/home/pxw/project/traffic_light/model/build/engines/df_tl.engine"
   Class_Bbox_Thresh: 0.7
   NMS_Thresh: 0.45
 
 Traffic_Light_PostProcessor:
   Track_Frame_Rate: 30
   Track_Buffer: 15
-  Min_Number_Of_Track: 5
+  Min_Number_Of_Track: 3

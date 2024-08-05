@@ -86,13 +86,13 @@ namespace perception
                 auto node = m_yaml_node["Traffic_Light_PostProcessor"];
 
                 TRY_OR_ERROR(node["Track_Frame_Rate"], "Traffic_Light_PostProcessor.Track_Frame_Rate");
-                m_detector_params.class_bbox_thresh = node["Track_Frame_Rate"].as<float>();
+                m_postprocess_params.track_frame_rate = node["Track_Frame_Rate"].as<float>();
 
                 TRY_OR_ERROR(node["Track_Buffer"], "Traffic_Light_PostProcessor.Track_Buffer");
-                m_detector_params.nms_thresh = node["Track_Buffer"].as<float>();
+                m_postprocess_params.track_buffer = node["Track_Buffer"].as<float>();
 
                 TRY_OR_ERROR(node["Min_Number_Of_Track"], "Traffic_Light_PostProcessor.Min_Number_Of_Track");
-                m_detector_params.nms_thresh = node["Min_Number_Of_Track"].as<float>();
+                m_postprocess_params.min_number_of_track = node["Min_Number_Of_Track"].as<float>();
 
                 return 0;
             }
