@@ -272,6 +272,9 @@ namespace perception
             {
                 auto obj = proposals[picked[i]];
 
+                if(obj->bbox.Area() < 200)  // 限制检测框的大小，最小200像素
+                    continue;
+
                 base::TrafficLightPtr tf_obj = std::make_shared<base::TrafficLight>();
                 tf_obj->id = i;
                 tf_obj->status.confidence = obj->conf;

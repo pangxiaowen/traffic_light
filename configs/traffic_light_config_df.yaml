@@ -16,7 +16,7 @@ Traffic_Light_Preprocessor:
     ]
 
 Traffic_Light_Detector:
-  Model_Path: "/home/pxw/project/traffic_light/model/build/engines/df_tl.engine"
+  Model_Path: "/home/pxw/project/traffic_light/model/build/engines/quant_plugin.engine"
   Class_Bbox_Thresh: 0.7
   NMS_Thresh: 0.45
 

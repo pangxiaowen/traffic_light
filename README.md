@@ -95,6 +95,12 @@ struct TrafficLightInterfaceOuput
 
 * 若更换新的硬件设备，尽量重新量化模型。
 
+* 关于model/libyoloPlugin.so的编译
+  1. cd src/detector/plugin
+  2. mkdir build & cd build 
+  3. cmake ..
+  4. make
+
 
 #### 相机参数生成
 * tools/gen_cam_params.py
