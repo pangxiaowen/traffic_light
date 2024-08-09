@@ -11,12 +11,32 @@ int main()
     tl_utm_positons.push_back({6120.224311316056, 8926.692219366063, 30.657984679563395});
     tl_utm_positons.push_back({6122.269526667129, 8926.921721728417, 30.640411978580715});
 
-
     // 自车的位姿信息
     Eigen::Vector3d cur_utm_position = Eigen::Vector3d(6122.368579481466, 8840.882388177793, 26.72400000000021);
-    auto cur_utm_quaternion = Eigen::AngleAxisd(0.0, Eigen::Vector3d::UnitX()) *
-                              Eigen::AngleAxisd(0.0, Eigen::Vector3d::UnitY()) *
-                              Eigen::AngleAxisd(1.5564116023526404, Eigen::Vector3d::UnitZ());
+
+    double vehicle_yaw = 1.5564116023526404;
+    auto cur_utm_quaternion = Eigen::AngleAxisd(0.0, Eigen::Vector3d::UnitX()) *        // roll
+                              Eigen::AngleAxisd(0.0, Eigen::Vector3d::UnitY()) *        // pitch
+                              Eigen::AngleAxisd(vehicle_yaw, Eigen::Vector3d::UnitZ()); // yaw
+
+    // 自车坐标系的点转世界坐标系
+    Eigen::Vector3d obs_ego_point{10, 1, 3}; // FLU 前左上
+    Eigen::Vector3d obs_world_point = cur_utm_quaternion * obs_ego_point + cur_utm_position;
+
+    // 自车坐标系的yaw角转到全局坐标系
+    double obs_ego_yaw = 1.23;
+    Eigen::Vector3d FLU_theta_v(std::cos(obs_ego_yaw), std::sin(obs_ego_yaw), 0.0);
+    Eigen::Vector3d ENU_theta_v = cur_utm_quaternion * FLU_theta_v; // FLU --> ENU 前左上转北东地
+    double obs_world_yaw = std::atan2(ENU_theta_v[1], ENU_theta_v[0]);
+
+    // 自车坐标系的速度转到全局坐标系
+    double obs_ego_v_x = 1;
+    double obs_ego_v_y = 1;
+    Eigen::Vector3d obs_ego_v(obs_ego_v_x, obs_ego_v_y, 0);
+    Eigen::Vector3d obs_world_v = cur_utm_quaternion * obs_ego_v;
+
+    // 多边形八个角点
+    auto dis_point = obs_world_yaw * obs_world_point;
 
     // 相机内外参数
     Eigen::Matrix4d cam2ego_matrix;
@@ -55,7 +75,7 @@ int main()
             cv::circle(Image, {x, y}, 3, {0, 0, 255});
         }
     }
-    
+
     cv::imwrite("test.jpg", Image);
 
     return 0;

@@ -52,8 +52,6 @@ add_subdirectory(preprocessor)
 
 include_directories(
   ${EIGEN3_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/detector
-  ${CMAKE_CURRENT_SOURCE_DIR}/postprocessor
   ${CMAKE_CURRENT_SOURCE_DIR}/postprocessor/bytetrack/include
   )
 
@@ -66,6 +64,7 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 target_link_libraries(${PROJECT_NAME}
+  traffic_light_preprocessor
   traffic_light_detector
   traffic_light_postprocessor
 )
@@ -79,9 +78,6 @@ add_library(${INTERFACE_LIB} SHARED
 target_link_libraries(${INTERFACE_LIB}
   ${PROJECT_NAME}
   yaml-cpp
-  traffic_light_preprocessor
-  traffic_light_detector
-  traffic_light_postprocessor
 )
 
 # 安装库文件

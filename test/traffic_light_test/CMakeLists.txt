@@ -53,8 +53,5 @@ target_link_libraries(${PROJECT_NAME}
   ${OpenCV_LIBS}
   ${CUDA_LIBRARIES}
   traffic_light
-  traffic_light_preprocessor
-  traffic_light_postprocessor
-  traffic_light_detector
   boost_filesystem
 )
