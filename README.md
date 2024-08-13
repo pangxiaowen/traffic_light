@@ -100,6 +100,10 @@ struct TrafficLightInterfaceOuput
   2. mkdir build & cd build 
   3. cmake ..
   4. make
+* 模型介绍
+    1. df_tl_fp16.onnx 根据采集数据进行标注训练的模型，在采集路线上表现较好
+    2. df_tl_int8.onnx 针对df_tl_fp16.onnx进行了int8量化， 效果相仿，速度略有提升。
+    3. s2tld_epoch100_fp16.onnx 基于s2tld数据集训练的模型
 
 
 #### 相机参数生成
