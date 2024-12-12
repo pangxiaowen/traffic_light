@@ -1,12 +1,12 @@
 Traffic_Light_Preprocessor:
-  Camera_Intrinsic:
+  Camera_Intrinsic: # 前视相机内参
     [
       [675.466713720245, 0, 647.387385423985, 0],
       [0, 678.957501724718, 356.804618676128, 0],
       [0, 0, 1, 0],
       [0, 0, 0, 1],
     ]
-  Camera2Ego:
+  Camera2Ego:       # 前视相机外参
     [
       [
         -0.05529270928380491,
@@ -29,12 +29,12 @@ Traffic_Light_Preprocessor:
       [0, 0, 0, 1],
     ]
 
-Traffic_Light_Detector:
-  Model_Path: "/home/pxw/project/traffic_light/model/s2tld_epoch100.trt"
-  Class_Bbox_Thresh: 0.7
-  NMS_Thresh: 0.45
+Traffic_Light_Detector: 
+  Model_Path: "/home/pxw/project/traffic_light/model/s2tld_epoch100.trt"  # 模型路径
+  Class_Bbox_Thresh: 0.7  # 置信度
+  NMS_Thresh: 0.45        # IOU 阈值
 
 Traffic_Light_PostProcessor:
-  Track_Frame_Rate: 30
-  Track_Buffer: 15
-  Min_Number_Of_Track: 5
+  Track_Frame_Rate: 30    # 检测频率
+  Track_Buffer: 15        # 追踪buffer
+  Min_Number_Of_Track: 5  # 至少追踪上多少次，再进行输出
